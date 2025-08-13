@@ -1,35 +1,230 @@
-@import './base.css';
+* {
+  box-sizing: border-box;
 
-#app {
-  max-width: 1280px;
+  &:before,
+  &:after {
+    box-sizing: border-box;
+  }
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: #ababab;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #116ACC;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #0f5897;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4,h5,h6 {
+  margin: 0;
+  font-family: "Work Sans", sans-serif;
+}
+
+ul, ol {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+}
+
+h1 {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 39px;
+  letter-spacing: -0.02em;
+}
+
+body{
+  padding: 0;
+  margin: 0;
+}
+.container {
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  padding: 0 50px;
+}
+.nice-select.account__select {
+  font-family: "Ubuntu", sans-serif;
+  width: 300px;
+  border: 1px solid #116ACC;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+.nice-select.account__select:after {
+  content: '';
+  border-bottom: 2px solid #000;
+  border-right: 2px solid #000;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+.nice-select.accounts-inner__middle-form-input {
+  font-family: "Ubuntu", sans-serif;
+  border: 1px solid #9CA3AF;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+  text-align: left;
+  height: auto;
+  padding: 9px 16px 9px 16px;
+  width: 100%;
+}
+
+.nice-select.accounts-inner__middle-form-input:after {
+  content: '';
+  border-bottom: 2px solid #000;
+  border-right: 2px solid #000;
+}
+
+.nice-select.exchange__select {
+  font-family: "Ubuntu", sans-serif;
+  border: 1px solid #9CA3AF;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+  text-align: left;
+  height: auto;
+  padding: 9px 16px 9px 16px;
+  width: 100%;
+}
+
+.nice-select.exchange__select:after {
+  content: '';
+  border-bottom: 2px solid #000;
+  border-right: 2px solid #000;
+}
+
+.nice-select.nice-select-dropdown {
+  width: 100%;
+}
+
+.nice-select .option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nice-select .option:first-child {
+  display: none;
+}
+
+.nice-select .option:hover {
+  background: #A0C3FF;
+}
+
+.nice-select .option.selected.focus {
+  font-weight: 400;
+  background-color: transparent;
+}
+
+.nice-select .option.selected.focus:after {
+  content: "";
+  display: block;
+  width: 13px;
+  height: 7px;
+  border: 2px solid #333;
+  border-top: none;
+  border-right: none;
+  transform: rotate(299deg);
+}
+.button{
+  padding: 16px 21px;
+  font-size: 16px;
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.01em;
+  color: #fff;
+  border-radius: 7px;
+  border: none;
+  outline: none;
+  background: #116ACC;
+  cursor: pointer;
+}
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  padding: 25px 0;
+  background: #116ACC;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.2509803922);
+  color: #fff;
+}
+.header__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.header__pseudologo {
+  font-family: "Work Sans", sans-serif;
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 56px;
+  text-align: left;
+  color: #fff;
+}
+.nav__btn {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.nav__btn:before, .nav__btn:after, .nav__btn-span {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 3px;
+  border-radius: 3px;
+  background-color: #FFFFFF;
+}
+.nav__btn:after, .nav__btn-span {
+  transition: transform ease-in 0.2s;
+}
+
+@media (max-width: 1060px) {
+  .header {
+    padding: 15px 0;
   }
 }
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
+@media (max-width: 1060px) {
+  .container {
+    padding: 0 15px;
   }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+}
+@media (max-width: 480px) {
+  .nice-select.account__select,
+  .nice-select.exchange__select,
+  .nice-select.accounts-inner__middle-form-input{
+    width: 100%;
   }
 }
