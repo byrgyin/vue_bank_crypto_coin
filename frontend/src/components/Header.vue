@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {useAuthoriseStore} from "@/stores/store.ts";
 const headerMenu = [
   {
     nameView:'atms',
@@ -23,7 +24,7 @@ const headerMenu = [
   <header class="header">
     <div class="container header__container">
       <div class="header__pseudologo">Coin.</div>
-      <nav class="header__nav">
+      <nav v-if="useAuthoriseStore().authoriseUser" class="header__nav">
         <ul class="nav__list">
           <li class="nav__item" v-for="(item) in headerMenu">
             <router-link class="nav__link" :to="{name:item.nameView}">{{item.nameText}}</router-link>

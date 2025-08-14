@@ -1,17 +1,37 @@
 <script setup lang="ts">
+import {ref} from 'vue';
+import { useRouter } from 'vue-router';
+import type {PassWords} from "@/types/types.ts";
+import {logInAcc} from "@/api/apiFetch.ts";
+import {useAuthoriseStore} from "@/stores/store.ts";
 
+const router = useRouter();
+
+const data = ref<PassWords>({
+  login: '',
+  password: '',
+});
+
+const submitForm = async () => {
+  const resData = await logInAcc(data.value);
+  if (resData) {
+    useAuthoriseStore().authoriseUser = true;
+    localStorage.setItem("token", resData.payload.token);
+    router.push({name: 'accounts'});
+  }
+}
 </script>
 
 <template>
-  <form class="login__form">
+  <form @submit.prevent="submitForm" class="login__form">
     <div class="form__wrap-input form__wrap-input--first">
       <label class="form__label" for="login">Логин</label>
-      <input class="form__input" type="text" id="login" name="login" required
+      <input v-model.trim="data.login" class="form__input" type="text" id="login" name="login" required
              placeholder="Placeholder">
     </div>
     <div class="form__wrap-input">
       <label class="form__label" for="password">Пароль</label>
-      <input class="form__input" type="text" id="password" name="password" required
+      <input v-model.trim="data.password" class="form__input" type="text" id="password" name="password" required
              placeholder="Placeholder">
     </div>
     <input class="button form__input-submit" type="submit">
