@@ -1,7 +1,7 @@
 import type {PassWords,AUTH_DATA} from "@/types/types.ts";
 
 /*GET*/
-export const loadCards = async (token: string) => {
+export const loadCards = async (token: string | null) => {
   const options = {
     method: 'GET',
     headers: {

@@ -1,13 +1,25 @@
 <script setup lang="ts">
+import {ref} from 'vue'
 import AccountCard from "@/components/AccountCard.vue";
+import type {Account} from "@/types/types.ts";
+import {loadCards} from "@/api/apiFetch.ts";
 
 const sortOptions = [
   { label: 'Сортирвока', value: '' },
   { label: 'По номеру', value: 'account' },
   { label: 'По балансу', value: 'balance' },
   { label: 'По последней транзакции', value: 'transactions' },
-]
-
+];
+const token = localStorage.getItem('token');
+const arrayCard = ref<Account[]>([]);
+const valueSelect = ref<string>('');
+const loadList = async () => {
+  arrayCard.value = await (await loadCards(token)).payload;
+}
+const selectChange = ()=>{
+  const paramSort = ref<string>(valueSelect.value);
+}
+loadList();
 </script>
 
 <template>
@@ -17,7 +29,7 @@ const sortOptions = [
       <div class="account__main-wrap">
         <h1 class="account__title">Ваши счета</h1>
         <form class="account__form">
-          <select class="account__select" id="account__select" >
+          <select @change="selectChange" v-model.trim="valueSelect" class="account__select" id="account__select" >
             <option v-for="item in sortOptions" :value="item.value">{{item.label}}</option>
           </select>
         </form>
@@ -25,10 +37,12 @@ const sortOptions = [
       <button class="button account__button-create" aria-label="Создать новый счёт">Создать новый счёт</button>
     </div>
     <ul class="account__list">
-      <AccountCard v-for="item in 16"
-        id="qwe"
-        price="312"
-        date="12312"/>
+      <AccountCard v-for="item in arrayCard"
+        :key="item.account"
+        :account="item.account"
+        :balance="item.balance"
+        :transactions="item.transactions"
+       />
     </ul>
   </div>
 </section>

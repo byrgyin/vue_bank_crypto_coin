@@ -1,20 +1,32 @@
 <script setup lang="ts">
-defineProps<{
-  id:string;
-  price: string;
-  date: string;
-}>()
+import {ParseDate} from "@/composables/helpers.ts";
+
+const props = defineProps<{
+  account:string;
+  balance: number;
+  transactions: [
+    { date:string;
+      from: string;
+      to: string;
+      amount: number;
+    }
+  ];
+}>();
+const date = ParseDate(props.transactions);
 </script>
 
 <template>
-  <li class="account__item" :data-account="id">
-    <div class="account__item-num">{{id}}</div>
-    <div class="account__item-sum">{{price}} ₽</div>
-    <div class="account__item-wrap">
+  <li class="account__item" :data-account="account">
+    <div class="account__item-num">{{account}}</div>
+    <div class="account__item-sum">{{balance}} ₽</div>
+    <div v-if="date" class="account__item-wrap">
       <div class="account__item-stattext">Последня трансзакция</div>
-      <div class="account__item-date">{{date}}</div>
+      <div  class="account__item-date">{{date}}</div>
     </div>
-    <button class="button account__item-button" :data-idaccount="id" aria-label="Отрыть счёт">Открыть</button>
+    <div v-else class="account__item-wrap">
+      <div class="account__item-stattext">Последня трансзакция: не было</div>
+    </div>
+    <button class="button account__item-button" :data-idaccount="account" aria-label="Отрыть счёт">Открыть</button>
   </li>
 </template>
 

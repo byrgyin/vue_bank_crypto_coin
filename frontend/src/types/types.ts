@@ -5,3 +5,16 @@ export interface PassWords{
 export interface AUTH_DATA extends PassWords {
   token: string;
 }
+export interface Transaction {
+  date: string;
+  from: string;
+  to: string;
+  amount: number;
+}
+
+export interface Account{
+  "account": string,
+  "balance": number,
+  "mine": boolean,
+  Transaction:[]
+}
