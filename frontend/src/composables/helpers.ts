@@ -1,4 +1,4 @@
-import type {Transaction} from "@/types/types.ts";
+import type {Transaction, PassWords} from "@/types/types.ts";
 
 export const ParseDate = (value:Transaction[] | undefined ):string | undefined => {
   if(value && value.length > 0){
@@ -10,5 +10,12 @@ export const ParseDate = (value:Transaction[] | undefined ):string | undefined =
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
     return `${day} ${monthNames[month]} ${year}`;
+  }
+}
+export const fillInput = (data:PassWords)=>{
+  if(localStorage.getItem('credential')){
+    const credential = JSON.parse(<string>localStorage.getItem('credential'));
+    data.login = credential.login;
+    data.password = credential.password;
   }
 }

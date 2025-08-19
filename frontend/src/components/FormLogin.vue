@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import type {PassWords} from "@/types/types.ts";
 import {logInAcc} from "@/api/apiFetch.ts";
 import {useAuthoriseStore} from "@/stores/store.ts";
+import {fillInput} from "@/composables/helpers.ts";
 
 const router = useRouter();
 
@@ -17,9 +18,11 @@ const submitForm = async () => {
   if (resData) {
     useAuthoriseStore().authoriseUser = true;
     localStorage.setItem("token", resData.payload.token);
+    localStorage.setItem('credential',JSON.stringify(data.value));
     router.push({name: 'accounts'});
   }
 }
+fillInput(data.value);
 </script>
 
 <template>
