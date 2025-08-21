@@ -18,3 +18,7 @@ export interface Account{
   "mine": boolean,
   Transaction:[]
 }
+export interface LocationPoint {
+  lat: number;
+  lon: number;
+}

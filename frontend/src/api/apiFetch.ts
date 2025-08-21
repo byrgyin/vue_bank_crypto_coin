@@ -14,6 +14,20 @@ export const loadCards = async (token: string | null) => {
     return await res.json();
   }
 }
+
+export const loadLocations = async (token: string | null) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${token}`
+    }
+  };
+  const res = await fetch('http://localhost:3000/banks', options);
+  if(res.ok){
+    return await res.json();
+  }
+}
 /*END GET*/
 
 /*POST*/

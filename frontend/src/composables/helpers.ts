@@ -19,3 +19,7 @@ export const fillInput = (data:PassWords)=>{
     data.password = credential.password;
   }
 }
+
+export const getLocalStorageToken = ():string | null=>{
+  return localStorage.getItem('token');
+}

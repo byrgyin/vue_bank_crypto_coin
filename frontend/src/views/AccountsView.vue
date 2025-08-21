@@ -3,6 +3,7 @@ import {ref} from 'vue'
 import AccountCard from "@/components/AccountCard.vue";
 import {loadCards} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
+import {getLocalStorageToken} from "@/composables/helpers.ts";
 
 const sortOptions = [
   { label: 'Сортировка', value: '' },
@@ -10,7 +11,7 @@ const sortOptions = [
   { label: 'По балансу', value: 'balance' },
   { label: 'По последней транзакции', value: 'transactions' },
 ];
-const token = localStorage.getItem('token');
+const token = getLocalStorageToken();
 const valueSelect = ref<string>('');
 const loadList = async () => {
   useListAccountStore().listAccounts = await (await loadCards(token)).payload;
