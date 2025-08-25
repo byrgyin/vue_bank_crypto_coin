@@ -1,4 +1,5 @@
-import type {PassWords,AUTH_DATA} from "@/types/types.ts";
+import type {PassWords,AUTH_DATA,EXCHANGE,CurrencyWebSocket} from "@/types/types.ts";
+
 
 /*GET*/
 export const loadCards = async (token: string | null) => {
@@ -43,3 +44,25 @@ export const logInAcc = async (data:PassWords):Promise<AUTH_DATA | undefined> =>
   }
 }
 /*END POST*/
+/* WebSocket */
+export const websocketCurrency = (url: string,callback:(data:EXCHANGE)=>void): CurrencyWebSocket => {
+  const ws: CurrencyWebSocket = new WebSocket(url);
+
+  ws.addEventListener('open', () => {
+    console.log('WebSocket Connection open');
+  });
+  ws.addEventListener('message', (event) => { // Убираем ненужный возвращаемый тип
+    const message = JSON.parse(event.data);
+    if(message.type === 'EXCHANGE_RATE_CHANGE'){
+      const obj: EXCHANGE = {
+        from: message.from,
+        to: message.to,
+        rate: message.rate,
+        change: message.change, // Предполагается, что message.change - это number, как в интерфейсе EXCHANGE
+      }
+      callback(obj);
+    }
+  });
+  return ws;
+}
+/* END WebSocket */

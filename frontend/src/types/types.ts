@@ -22,3 +22,10 @@ export interface LocationPoint {
   lat: number;
   lon: number;
 }
+export interface EXCHANGE{
+  from: string;
+  to: string;
+  rate: string;
+  change: number;
+}
+export type CurrencyWebSocket = WebSocket;
