@@ -29,6 +29,21 @@ export const loadLocations = async (token: string | null) => {
     return await res.json();
   }
 }
+export const getCurrenciesAmount = async (token: string) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${token}`
+    }
+  };
+  try {
+    const res = await fetch('http://localhost:3000/currencies', options)
+    if(res.ok) return await res.json();
+  } catch (e) {
+    console.log(e);
+  }
+}
 /*END GET*/
 
 /*POST*/
@@ -41,6 +56,25 @@ export const logInAcc = async (data:PassWords):Promise<AUTH_DATA | undefined> =>
   const res = await fetch('http://localhost:3000/login', options);
   if(res.ok){
     return await res.json();
+  }
+}
+export const TransferEXCHANGE = async (token: string,data:EXCHANGE) => {
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${token}`
+    },
+    body: JSON.stringify(data)
+  }
+  try {
+    const res = await fetch('http://localhost:3000/currency-buy', options);
+    if (!res.ok) {
+      throw new Error('Не удалось получить доступ');
+    }
+    return await res.json();
+  } catch(err) {
+    console.log(err)
   }
 }
 /*END POST*/

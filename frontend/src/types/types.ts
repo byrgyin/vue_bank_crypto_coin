@@ -25,7 +25,8 @@ export interface LocationPoint {
 export interface EXCHANGE{
   from: string;
   to: string;
-  rate: string;
-  change: number;
+  rate?: string;
+  change?: number;
+  amount?: number;
 }
 export type CurrencyWebSocket = WebSocket;

@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import {ref,onMounted,onUnmounted} from 'vue';
-import {websocketCurrency} from "@/api/apiFetch.ts";
+import {websocketCurrency,TransferEXCHANGE,getCurrenciesAmount} from "@/api/apiFetch.ts";
 import type {EXCHANGE,CurrencyWebSocket} from "@/types/types.ts"
+import {getLocalStorageToken} from "@/composables/helpers.ts";
 
 const currencies: string[] = ["AUD","BTC","BYR","CAD","CHF","CNH","ETH","EUR","GBP","HKD","JPY","NZD","RUB","UAH","USD"];
+const defaultCurrency = currencies[0] || '';
 const submitCurrencies = ref<EXCHANGE[]>([]);
 const realTime = ref<EXCHANGE[]>([]);
+const token:string = getLocalStorageToken();
 let wsInstance: CurrencyWebSocket | null = null;
 
-const formObj = ref<object>({});
+const formObj = ref<EXCHANGE>({
+  from: defaultCurrency,
+  to: defaultCurrency,
+  amount: 0,
+});
 
 const setCurrencies = (ojb: EXCHANGE):void => {
   if(realTime.value.length < 21){
@@ -18,14 +25,28 @@ const setCurrencies = (ojb: EXCHANGE):void => {
   }
 }
 
-const submit = async (event:EVENT) => {
-  console.log(event);
+const submit = async ():Promise<void>=> {
+  submitCurrencies.value = [];
+  const res = await (await TransferEXCHANGE(token,formObj.value)).payload;
+  for(const item in res){
+    submitCurrencies.value.push(res[item]);
+  }
 }
+
+const loadCurrencies = async ():Promise<void> => {
+  submitCurrencies.value = [];
+  const res = await (await getCurrenciesAmount(token)).payload;
+  for(const item in res){
+    submitCurrencies.value.push(res[item]);
+  }
+}
+loadCurrencies();
 
 onMounted(() => {
   wsInstance = websocketCurrency('ws://localhost:3000/currency-feed', (obj: EXCHANGE) => {
     setCurrencies(obj);
   });
+
 });
 
 onUnmounted(() => {
@@ -44,8 +65,8 @@ onUnmounted(() => {
         <div class="valut__title">Ваши валюты</div>
         <ul class="valut__list">
           <li class="valut__item" v-for="item in submitCurrencies">
-            <div class="valut__item-key"></div>
-            <div class="valut__item-value"></div>
+            <div class="valut__item-key">{{item.code}}</div>
+            <div class="valut__item-value">{{item.amount?.toFixed(2)}}</div>
           </li>
         </ul>
       </div>
@@ -54,8 +75,10 @@ onUnmounted(() => {
         <form @submit.prevent="submit" class="exchange__form">
           <label class="exchange__label" for="from">
             <span>Из</span>
+
             <select v-model="formObj.from" id="from" class="exchange__select" name="from">
             <option v-for="(item,index) in currencies" :key="index" :value="item">{{item}}</option>
+
           </select>
           </label>
           <label class="exchange__label" for="to">
@@ -121,11 +144,21 @@ onUnmounted(() => {
   letter-spacing: 0.1em;
   text-align: left;
 }
+.valut__item:not(:last-child) {
+  margin-bottom: 25px;
+}
 .valut__item-key{
   display: flex;
   align-items: baseline;
   gap: 10px;
   width: 100%;
+}
+.valut__item-key:after{
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  border: 1px dashed #000;
 }
 .valut__item-value{
   font-weight: 400;
