@@ -20,6 +20,6 @@ export const fillInput = (data:PassWords)=>{
   }
 }
 
-export const getLocalStorageToken = ():string | null=>{
+export const getLocalStorageToken = ():string=>{
   return localStorage.getItem('token');
 }

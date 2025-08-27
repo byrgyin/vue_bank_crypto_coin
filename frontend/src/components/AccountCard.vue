@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {ParseDate} from "@/composables/helpers.ts";
-
 const props = defineProps<{
   account:string;
   balance: number;
@@ -26,7 +25,7 @@ const date = ParseDate(props.transactions);
     <div v-else class="account__item-wrap">
       <div class="account__item-stattext">Последня трансзакция: не было</div>
     </div>
-    <button class="button account__item-button" :data-idaccount="account" aria-label="Отрыть счёт">Открыть</button>
+    <router-link :to="{name:'accountInner', params:{account}}" class="button account__item-button" :data-idaccount="account" aria-label="Отрыть счёт">Открыть</router-link>
   </li>
 </template>
 

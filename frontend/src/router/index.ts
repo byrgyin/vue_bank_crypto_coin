@@ -21,6 +21,12 @@ const routes = [
     meta:{requiresAuth: true},
   },
   {
+    path: '/accounts/:account',
+    name: 'accountInner',
+    component: () => import('../views/AccountsInnerView.vue'),
+    meta:{requiresAuth: true},
+  },
+  {
     path: '/currency',
     name: 'currency',
     component: () => import('../views/CurrencyView.vue'),

@@ -1,5 +1,4 @@
-import type {PassWords,AUTH_DATA,EXCHANGE,CurrencyWebSocket} from "@/types/types.ts";
-
+import type {PassWords, AUTH_DATA, EXCHANGE, CurrencyWebSocket, Account} from "@/types/types.ts";
 
 /*GET*/
 export const loadCards = async (token: string | null) => {
@@ -47,6 +46,22 @@ export const getCurrenciesAmount = async (token: string) => {
 /*END GET*/
 
 /*POST*/
+export const createCard = async (token: string):Promise<Account> => {
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${token}`
+    },
+  }
+  const response = await fetch(`http://localhost:3000/create-account`, options);
+  if(response.ok) {
+    return await response.json();
+  } else {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+}
+
 export const logInAcc = async (data:PassWords):Promise<AUTH_DATA | undefined> => {
   const options = {
     method: 'POST',

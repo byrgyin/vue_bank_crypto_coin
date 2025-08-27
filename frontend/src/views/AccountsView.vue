@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import AccountCard from "@/components/AccountCard.vue";
-import {loadCards} from "@/api/apiFetch.ts";
+import {loadCards,createCard} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
 import {getLocalStorageToken} from "@/composables/helpers.ts";
+import type {Account} from "@/types/types.ts";
 
 const sortOptions = [
   { label: 'Сортировка', value: '' },
@@ -20,6 +21,10 @@ const selectChange = ()=>{
   const paramSort = ref<string>(valueSelect.value);
   useListAccountStore().sortType = paramSort.value as 'account' | 'balance' | 'transactions';
 }
+const createEvent = async ():Promise<void>=>{
+  const newAcc:Account = await (await createCard(token)).payload;
+  useListAccountStore().listAccounts.push(newAcc);
+}
 loadList();
 </script>
 
@@ -35,7 +40,7 @@ loadList();
           </select>
         </form>
       </div>
-      <button class="button account__button-create" aria-label="Создать новый счёт">Создать новый счёт</button>
+      <button @click="createEvent" class="button account__button-create" aria-label="Создать новый счёт">Создать новый счёт</button>
     </div>
     <ul v-if="useListAccountStore().sortedList" class="sortedList account__list">
       <AccountCard v-for="item in useListAccountStore().sortedList"
