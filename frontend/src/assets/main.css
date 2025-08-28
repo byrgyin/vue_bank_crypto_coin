@@ -160,6 +160,7 @@ body{
   outline: none;
   background: #116ACC;
   cursor: pointer;
+  text-decoration: none;
 }
 .header {
   position: fixed;

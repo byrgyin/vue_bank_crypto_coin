@@ -3,7 +3,7 @@ import {ref} from 'vue'
 import AccountCard from "@/components/AccountCard.vue";
 import {loadCards,createCard} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
-import {getLocalStorageToken} from "@/composables/helpers.ts";
+import { getLocalStorageToken,formatNumber } from "@/composables/helpers.ts";
 import type {Account} from "@/types/types.ts";
 
 const sortOptions = [

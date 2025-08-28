@@ -2,7 +2,7 @@
 import {ref,onMounted,onUnmounted} from 'vue';
 import {websocketCurrency,TransferEXCHANGE,getCurrenciesAmount} from "@/api/apiFetch.ts";
 import type {EXCHANGE,CurrencyWebSocket} from "@/types/types.ts"
-import {getLocalStorageToken} from "@/composables/helpers.ts";
+import { getLocalStorageToken } from "@/composables/helpers.ts";
 
 const currencies: string[] = ["AUD","BTC","BYR","CAD","CHF","CNH","ETH","EUR","GBP","HKD","JPY","NZD","RUB","UAH","USD"];
 const defaultCurrency = currencies[0] || '';

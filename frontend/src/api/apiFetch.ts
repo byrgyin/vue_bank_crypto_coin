@@ -43,6 +43,22 @@ export const getCurrenciesAmount = async (token: string) => {
     console.log(e);
   }
 }
+export const loadAccount = async (token: string, account:string) => {
+  const options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${token}`
+    },
+  }
+  try {
+    const res = await fetch(`http://localhost:3000/account/${account}`, options);
+    if(res.ok) return await res.json();
+
+  } catch (e) {
+    console.log(e)
+  }
+}
 /*END GET*/
 
 /*POST*/
