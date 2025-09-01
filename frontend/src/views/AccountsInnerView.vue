@@ -20,12 +20,27 @@ const formatMoney = computed(() => {
 const filteredSelectAccount = computed(() => {
   return useListAccountStore().listAccounts.filter(item => item.account !== dataPage.value?.account)
 });
+const firstAvailableAccount = computed(() => {
+  const accounts = filteredSelectAccount.value;
+  return accounts.length > 0 ? accounts[0].account : '';
+});
 
 const loadPage = async () => {
   dataPage.value = await (await loadAccount(token, account)).payload;
+  accountTo.value = firstAvailableAccount.value;
+}
+
+const submitTransfer = ()=> {
+ const obj = {
+   from: dataPage.value?.account,
+   to: accountTo.value,
+   amount: howMuch.value,
+ };
+  console.log(obj)
 }
 
 loadPage();
+
 </script>
 
 <template>
@@ -43,18 +58,18 @@ loadPage();
       <div class="accounts-inner__middle">
         <div class="accounts-inner__middle-wrap-form">
           <h2 class="accounts-inner__middle-title">Новый перевод</h2>
-          <form class="accounts-inner__middle-form">
+          <form @submit.prevent="submitTransfer" class="accounts-inner__middle-form">
             <label class="accounts-inner__middle-form-label" for="account">
               <span>Номер счёта</span>
               <select v-model="accountTo" class="accounts-inner__middle-form-input" id="account" required name="account">
-                <option v-for="item in filteredSelectAccount" :value="item.account">{{item.account}}</option>
+                <option v-for="item in filteredSelectAccount"  :value="item.account">{{item.account}}</option>
               </select>
             </label>
             <label class="accounts-inner__middle-form-label" for="amount">
               <span>Сумма перевода</span>
               <input v-model="howMuch" class="accounts-inner__middle-form-input" id="amount" min="0" type="number" placeholder="Placeholder" required name="amount">
             </label>
-            <button class="button accounts-inner__middle-form-inputsubmit" type="submit">Отправить</button>
+            <input class="button accounts-inner__middle-form-inputsubmit" type="submit" value="Отправить"/>
           </form>
         </div>
       </div>
@@ -252,5 +267,15 @@ loadPage();
   width: 100%;
   height: 44px;
   max-width: 300px;
+}
+.accounts-inner__middle-form-input::-webkit-outer-spin-button,
+.accounts-inner__middle-form-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.accounts-inner__middle-form-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>

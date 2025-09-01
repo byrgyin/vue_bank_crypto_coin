@@ -108,6 +108,22 @@ export const TransferEXCHANGE = async (token: string,data:EXCHANGE) => {
     console.log(err)
   }
 }
+export const postTransfer = async (data:EXCHANGE,token:string)=>{
+  const options = {
+    method:'POST',
+    headers:{'Content-Type': 'application/json','Authorization': `Basic ${token}`},
+    body: JSON.stringify(data)
+  }
+  try {
+    const res = await fetch('http://localhost:3000/transfer-funds', options);
+    if (!res.ok) {
+      throw new Error('Не удалось получить доступ');
+    }
+    return await res.json();
+  } catch (err) {
+    console.log(err)
+  }
+}
 /*END POST*/
 /* WebSocket */
 export const websocketCurrency = (url: string,callback:(data:EXCHANGE)=>void): CurrencyWebSocket => {
