@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import {useRoute} from "vue-router";
-import {formatNumber, getLocalStorageToken, ParseShortDotDate} from "@/composables/helpers.ts";
-import {loadAccount} from "@/api/apiFetch.ts";
+import {formatNumber, getLocalStorageToken, ParseShortDotDate,createBars} from "@/composables/helpers.ts";
+import {loadAccount,postTransfer} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
 import type {Account} from "@/types/types.ts";
 
@@ -10,6 +10,9 @@ const transHistoryArr = ref<string[]>(['Счёт отправителя', 'Сч�
 const account = useRoute().params.account as string;
 const token = getLocalStorageToken();
 const dataPage = ref<Account | null>(null);
+const reversedTransactions = computed(() => {
+  return dataPage.value?.transactions?.slice().reverse() || [];
+});
 const accountTo = ref<string>('');
 const howMuch = ref<number | null>(null);
 
@@ -28,15 +31,19 @@ const firstAvailableAccount = computed(() => {
 const loadPage = async () => {
   dataPage.value = await (await loadAccount(token, account)).payload;
   accountTo.value = firstAvailableAccount.value;
+  console.log(dataPage.value);
 }
 
-const submitTransfer = ()=> {
+const submitTransfer = async ()=> {
  const obj = {
    from: dataPage.value?.account,
    to: accountTo.value,
    amount: howMuch.value,
  };
-  console.log(obj)
+  const value = await postTransfer(obj, token);
+  if(value.payload){
+    loadPage();
+  }
 }
 
 loadPage();
@@ -72,6 +79,21 @@ loadPage();
             <input class="button accounts-inner__middle-form-inputsubmit" type="submit" value="Отправить"/>
           </form>
         </div>
+        <div class="accounts-inner__dynamic">
+          <h2 class="accounts-inner__dynamic-title">Диманика баланса</h2>
+          <div class="accounts-inner__dynamic-items">
+            <div class="accounts-inner__dynamic-canvas">
+
+            </div>
+            <div class="accounts-inner__dynamic-wrapminmax">
+              <span class="accounts-inner__dynamic-value"></span>
+              <span class="accounts-inner__dynamic-value"></span>
+            </div>
+            <ul class="accounts-inner__dynamic-list">
+
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="accounts-inner__trans">
         <h2 class="accounts-inner__trans-title">История переводов</h2>
@@ -79,7 +101,7 @@ loadPage();
           <li v-for="item in transHistoryArr">{{ item }}</li>
         </ul>
         <ul class="accounts-inner__list">
-          <li class="accounts-inner__list-item" v-for="item in dataPage?.transactions">
+          <li class="accounts-inner__list-item" v-for="item in reversedTransactions">
             <div class="accounts-inner__list-item--from">{{ item.from }}</div>
             <div class="accounts-inner__list-item--to">{{ item.to }}</div>
             <div v-if="dataPage?.account === item.to"
@@ -277,5 +299,48 @@ loadPage();
 .accounts-inner__middle-form-input {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+.accounts-inner__dynamic {
+  padding: 25px 50px;
+  background-color: #FFFFFF;
+  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.2509803922);
+  border-radius: 40px;
+  cursor: pointer;
+  overflow: auto;
+}
+.accounts-inner__dynamic-title {
+  margin-bottom: 25px;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 23px;
+  letter-spacing: -0.02em;
+}
+.accounts-inner__dynamic-items {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 24px;
+}
+.accounts-inner__dynamic-canvas {
+  display: grid;
+  grid-template-columns: repeat(var(--count-items), 1fr);
+  gap: 28px;
+  align-items: flex-end;
+  padding: 0 20px;
+  height: 156px;
+  border: 1px solid;
+}
+.accounts-inner__dynamic-wrapminmax {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  min-width: 49px;
+  height: 156px;
+}
+.accounts-inner__dynamic-list{
+  display: grid;
+  grid-template-columns: repeat(var(--count-items), 1fr);
+  gap: 28px;
+  padding: 10px 20px;
+  text-align: center;
 }
 </style>

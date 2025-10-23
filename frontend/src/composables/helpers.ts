@@ -1,4 +1,4 @@
-import type {Transaction, PassWords} from "@/types/types.ts";
+import type {Transaction, PassWords, Account} from "@/types/types.ts";
 
 export const ParseDate = (value:Transaction[] | undefined ):string | undefined => {
   if(value && value.length > 0){
@@ -48,5 +48,10 @@ export const fillInput = (data:PassWords)=>{
     data.password = credential.password;
   }
 }
+/*create bars*/
+export const createBars = (data:Account | null)=>{
+
+}
+/* end create bars*/
 export const getLocalStorageToken = (): string => {return <string>localStorage.getItem('token');};
 

@@ -13,9 +13,9 @@ export interface Transaction {
 }
 
 export interface Account{
-  "account": string,
-  "balance": number,
-  "mine": boolean,
+  account: string,
+  balance: number,
+  mine: boolean,
   Transaction:[]
 }
 export interface LocationPoint {
@@ -23,8 +23,8 @@ export interface LocationPoint {
   lon: number;
 }
 export interface EXCHANGE{
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
   rate?: string;
   change?: number;
   amount?: number;
