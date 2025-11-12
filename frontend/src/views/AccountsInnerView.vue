@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import {useRoute} from "vue-router";
-import {formatNumber, getLocalStorageToken, ParseShortDotDate,createBars} from "@/composables/helpers.ts";
+import {
+  formatNumber,
+  getLocalStorageToken,
+  ParseShortDotDate,
+  createBarsSixMonth,
+  createMinMax,
+  getMonths} from "@/composables/helpers.ts";
 import {loadAccount,postTransfer} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
 import type {Account} from "@/types/types.ts";
@@ -11,10 +17,11 @@ const account = useRoute().params.account as string;
 const token = getLocalStorageToken();
 const dataPage = ref<Account | null>(null);
 const reversedTransactions = computed(() => {
-  return dataPage.value?.transactions?.slice().reverse() || [];
+  return dataPage.value?.transactions?.slice(-25).reverse() || [];
 });
 const accountTo = ref<string>('');
 const howMuch = ref<number | null>(null);
+const minMax = ref<{ min: number; max: number }>({ min: 0, max: 0 });
 
 const formatMoney = computed(() => {
   return formatNumber(dataPage?.value?.balance);
@@ -28,10 +35,13 @@ const firstAvailableAccount = computed(() => {
   return accounts.length > 0 ? accounts[0].account : '';
 });
 
+
 const loadPage = async () => {
   dataPage.value = await (await loadAccount(token, account)).payload;
   accountTo.value = firstAvailableAccount.value;
-  console.log(dataPage.value);
+  const monthly = createBarsSixMonth(dataPage.value);
+  minMax.value = createMinMax(monthly);
+  getMonths(monthly);
 }
 
 const submitTransfer = async ()=> {
@@ -46,7 +56,10 @@ const submitTransfer = async ()=> {
   }
 }
 
+
+
 loadPage();
+
 
 </script>
 
@@ -83,11 +96,10 @@ loadPage();
           <h2 class="accounts-inner__dynamic-title">Диманика баланса</h2>
           <div class="accounts-inner__dynamic-items">
             <div class="accounts-inner__dynamic-canvas">
-
             </div>
             <div class="accounts-inner__dynamic-wrapminmax">
-              <span class="accounts-inner__dynamic-value"></span>
-              <span class="accounts-inner__dynamic-value"></span>
+              <span class="accounts-inner__dynamic-value">{{ minMax.max.toLocaleString() }} ₽</span>
+              <span class="accounts-inner__dynamic-value">{{ minMax.min.toLocaleString() }} ₽</span>
             </div>
             <ul class="accounts-inner__dynamic-list">
 

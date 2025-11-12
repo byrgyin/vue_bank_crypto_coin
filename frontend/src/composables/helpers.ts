@@ -48,10 +48,69 @@ export const fillInput = (data:PassWords)=>{
     data.password = credential.password;
   }
 }
-/*create bars*/
-export const createBars = (data:Account | null)=>{
 
+/*create bars*/
+export const createMinMax = (data: Record<string, any[]>): { min: number; max: number } => {
+  // 1. берём все ключи и сортируем по дате (по-умолчанию они уже в ISO-формате)
+  console.log(data)
+  const keys = Object.keys(data).sort();
+
+  // 2. последние 6 месяцев (или все, если их < 6)
+  const recent = keys.slice(-6);
+
+  let min = +Infinity;
+  let max = -Infinity;
+
+  // 3. один проход по всем транзакциям нужных месяцев
+  for (const month of recent) {
+    for (const tr of data[month] ?? []) {
+      const amount = Number(tr.amount);
+      if (amount < min) min = amount;
+      if (amount > max) max = amount;
+    }
+  }
+
+  return { min: min === +Infinity ? 0 : min, max: max === -Infinity ? 0 : max };
+};
+
+export const createBarsSixMonth = (data:any)=>{
+
+  const transactions = Array.isArray(data) ? data : data?.payload?.transactions || data?.transactions || [];
+
+  if (!transactions.length) return {};
+
+  const monthlyData = transactions.reduce((acc: Record<string, any[]>, curr: any) => {
+    const yearMonth = new Date(curr.date).toISOString().slice(0, 7);
+    (acc[yearMonth] ??= []).push(curr);
+    return acc;
+  }, {});
+
+  return monthlyData;
 }
+
+export const getMonths = (monthly:any)=>{
+  const monthNames:[string] = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+  const monthNum = []
+  let montShortName:[string] = [];
+  let count:number = 0;
+
+  for (const mont in monthly) {
+    const currMonth = Number(mont.slice(-2));
+    monthNum.push(currMonth)
+  }
+  const sortedMonths = monthNum.map(index => monthNames[index - 1]);
+  if(sortedMonths.length > 0){
+    sortedMonths.forEach(item => {
+      if (item !== undefined) {
+        montShortName.push(item.slice(0, 3));
+        count++
+      }
+    })
+    console.log(montShortName);
+    console.log(count);
+  }
+}
+
 /* end create bars*/
 export const getLocalStorageToken = (): string => {return <string>localStorage.getItem('token');};
 
