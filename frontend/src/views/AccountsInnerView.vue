@@ -5,22 +5,25 @@ import {
   formatNumber,
   getLocalStorageToken,
   ParseShortDotDate,
-  createBarsSixMonth,
+  accumulateMonth,
   createMinMax,
   getMonths} from "@/composables/helpers.ts";
 import {loadAccount,postTransfer} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
-import type {Account} from "@/types/types.ts";
+import type {Account, ResultItem} from "@/types/types.ts";
 
 const transHistoryArr = ref<string[]>(['Счёт отправителя', 'Счёт получателя', 'Сумма', 'Дата']);
 const account = useRoute().params.account as string;
 const token = getLocalStorageToken();
 const dataPage = ref<Account | null>(null);
+let countGrid = ref<number>(0);
 const reversedTransactions = computed(() => {
   return dataPage.value?.transactions?.slice(-25).reverse() || [];
 });
 const accountTo = ref<string>('');
 const howMuch = ref<number | null>(null);
+const barsArray = ref<ResultItem[]>([]);
+const months = ref<[string]>(['']);
 const minMax = ref<{ min: number; max: number }>({ min: 0, max: 0 });
 
 const formatMoney = computed(() => {
@@ -39,9 +42,12 @@ const firstAvailableAccount = computed(() => {
 const loadPage = async () => {
   dataPage.value = await (await loadAccount(token, account)).payload;
   accountTo.value = firstAvailableAccount.value;
-  const monthly = createBarsSixMonth(dataPage.value);
+  const monthly = accumulateMonth(dataPage.value);
   minMax.value = createMinMax(monthly);
-  getMonths(monthly);
+  const {count,resultArray,montShortName} = getMonths(monthly);
+  barsArray.value = resultArray.value;
+  countGrid.value = count;
+  months.value = montShortName;
 }
 
 const submitTransfer = async ()=> {
@@ -94,15 +100,18 @@ loadPage();
         </div>
         <div class="accounts-inner__dynamic">
           <h2 class="accounts-inner__dynamic-title">Диманика баланса</h2>
-          <div class="accounts-inner__dynamic-items">
+          <div class="accounts-inner__dynamic-items" :style="{'--count-items':countGrid}">
             <div class="accounts-inner__dynamic-canvas">
+              <div class="accounts-inner__dynamic-bar" v-for="item in barsArray" :style="{'height':`${item.percentValue}%`} "></div>
             </div>
             <div class="accounts-inner__dynamic-wrapminmax">
               <span class="accounts-inner__dynamic-value">{{ minMax.max.toLocaleString() }} ₽</span>
               <span class="accounts-inner__dynamic-value">{{ minMax.min.toLocaleString() }} ₽</span>
             </div>
             <ul class="accounts-inner__dynamic-list">
-
+              <li v-for="item in months">
+                {{item}}
+              </li>
             </ul>
           </div>
         </div>
@@ -354,5 +363,9 @@ loadPage();
   gap: 28px;
   padding: 10px 20px;
   text-align: center;
+}
+.accounts-inner__dynamic-bar{
+  width: 100%;
+  background: #116ACC;
 }
 </style>

@@ -29,4 +29,8 @@ export interface EXCHANGE{
   change?: number;
   amount?: number;
 }
+export interface ResultItem {
+  curentNum: number;
+  percentValue: number;
+}
 export type CurrencyWebSocket = WebSocket;
