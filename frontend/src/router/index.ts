@@ -27,6 +27,12 @@ const routes = [
     meta:{requiresAuth: true},
   },
   {
+    path: '/accounts/:account/history',
+    name: 'AccountsInnerHistoryView',
+    component: () => import('../views/AccountsInnerHistoryView.vue'),
+    meta:{requiresAuth: true},
+  },
+  {
     path: '/currency',
     name: 'currency',
     component: () => import('../views/CurrencyView.vue'),

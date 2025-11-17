@@ -38,7 +38,6 @@ const firstAvailableAccount = computed(() => {
   return accounts.length > 0 ? accounts[0].account : '';
 });
 
-
 const loadPage = async () => {
   dataPage.value = await (await loadAccount(token, account)).payload;
   accountTo.value = firstAvailableAccount.value;
@@ -98,7 +97,7 @@ loadPage();
             <input class="button accounts-inner__middle-form-inputsubmit" type="submit" value="Отправить"/>
           </form>
         </div>
-        <div class="accounts-inner__dynamic">
+        <router-link :to="'/accounts/' + account + '/history'" class="accounts-inner__dynamic">
           <h2 class="accounts-inner__dynamic-title">Диманика баланса</h2>
           <div class="accounts-inner__dynamic-items" :style="{'--count-items':countGrid}">
             <div class="accounts-inner__dynamic-canvas">
@@ -114,7 +113,7 @@ loadPage();
               </li>
             </ul>
           </div>
-        </div>
+        </router-link>
       </div>
       <div class="accounts-inner__trans">
         <h2 class="accounts-inner__trans-title">История переводов</h2>

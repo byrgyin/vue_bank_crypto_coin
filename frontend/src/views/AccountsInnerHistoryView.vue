@@ -14,7 +14,9 @@ import type {Account, ResultItem} from "@/types/types.ts";
 </script>
 
 <template>
-
+<section>
+  <h1>historyhistory</h1>
+</section>
 </template>
 
 <style scoped>
