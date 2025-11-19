@@ -80,6 +80,7 @@ const props = defineProps<{
   padding: 0 20px;
   height: 156px;
   border: 1px solid;
+  overflow: hidden;
 }
 .accounts-inner__dynamic-wrapminmax {
   display: flex;

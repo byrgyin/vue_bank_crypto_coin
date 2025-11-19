@@ -12,13 +12,18 @@ import {loadAccount,postTransfer} from "@/api/apiFetch.ts";
 import {useListAccountStore} from "@/stores/store.ts";
 import type {Account, ResultItem} from "@/types/types.ts";
 import BarCharts from "@/components/BarCharts.vue";
+import AccounHead from "@/components/AccounHead.vue";
+import AccountTableTrans from "@/components/AccountTableTrans.vue";
 
 const route = useRoute();
+const transHistoryHead = ref<string[]>(['Счёт отправителя', 'Счёт получателя', 'Сумма', 'Дата']);
 const account = useRoute().params.account as string;
 const token = getLocalStorageToken();
 const dataPage = ref<Account | null>(null);
 let countGrid = ref<number>(0);
-
+const formatMoney = computed(() => {
+  return formatNumber(dataPage?.value?.balance);
+});
 const accountTo = ref<string>('');
 const barsArray = ref<ResultItem[]>([]);
 const months = ref<[string]>(['']);
@@ -30,6 +35,9 @@ const filteredSelectAccount = computed(() => {
 const firstAvailableAccount = computed(() => {
   const accounts = filteredSelectAccount.value;
   return accounts.length > 0 ? accounts[0].account : '';
+});
+const reversedTransactions = computed(() => {
+  return dataPage.value?.transactions?.slice(-25).reverse() || [];
 });
 
 const loadPage = async () => {
@@ -49,19 +57,23 @@ loadPage();
 <template>
 <section class="accounts-inner">
   <div class="container">
-    <div class="accounts-inner__head">
-      <h1 class="accounts-inner__title">История баланса</h1>
-      <div data-v-86e0f954="" class="accounts-inner__num">№ {{ dataPage?.account }}</div>
-      <router-link data-v-86e0f954="" :to="'/accounts/' + route.params.account" class="accounts-inner__back button">Вернутся назад</router-link>
-      <div class="accounts-inner__wrap-balance"><span class="accounts-inner__static-text">Баланс</span><span class="accounts-inner__balance">15 941 285 ₽</span></div>
-    </div>
+    <AccounHead
+      :account="dataPage?.account"
+      :balance="formatMoney"
+      :backToAccount="true"
+    />
     <BarCharts
-      :route="true"
+      :route="false"
       :account="account"
       :countGrid="countGrid"
       :minMax="minMax"
       :months="months"
       :barsArray="barsArray"
+    />
+    <AccountTableTrans
+      :transHistoryHead="transHistoryHead"
+      :Transactions="reversedTransactions"
+      :currentAccountId="dataPage?.account"
     />
   </div>
 </section>
