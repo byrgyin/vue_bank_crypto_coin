@@ -2,28 +2,28 @@
 import type {ResultItem} from "@/types/types.ts";
 
 const props = defineProps<{
-  route: boolean;
-  margin:boolean;
   account: string;
-  countGrid:number;
-  barsArray:ResultItem[];
-  minMax:{
-    min:number,
-    max:number
+  countGrid: number;
+  barsArray: ResultItem[];
+  minMax: {
+    min: number,
+    max: number
   };
   months: string[];
 }>();
 </script>
 
 <template>
-  <router-link v-if="props.route" :to="'/accounts/' + account + '/history'"
-               class="accounts-inner__dynamic"
-               :class="{'accounts-inner__dynamic--margin' : margin}"
-  >
-    <h2 class="accounts-inner__dynamic-title">Диманика баланса</h2>
+  <div class="accounts-inner__dynamic accounts-inner__dynamic--margin">
+    <h2 class="accounts-inner__dynamic-title">Соотношение входящих исходящих транзакций</h2>
     <div class="accounts-inner__dynamic-items" :style="{'--count-items':countGrid}">
       <div class="accounts-inner__dynamic-canvas">
-        <div class="accounts-inner__dynamic-bar" v-for="item in barsArray" :style="{'height':`${item.percentValue}%`} "></div>
+        <div class="accounts-inner__dynamic-bar"
+             v-for="item in barsArray"
+             :style="{
+               '--percent-main':`${item.percentValue}%`,
+               '--percent-gross':`${item.percentGross}%`,
+               '--percent-loss':`${item.percentLoss}%`}"></div>
       </div>
       <div class="accounts-inner__dynamic-wrapminmax">
         <span class="accounts-inner__dynamic-value">{{ minMax.max.toLocaleString() }} ₽</span>
@@ -31,27 +31,7 @@ const props = defineProps<{
       </div>
       <ul class="accounts-inner__dynamic-list">
         <li v-for="item in months">
-          {{item}}
-        </li>
-      </ul>
-    </div>
-  </router-link>
-  <div v-else
-       class="accounts-inner__dynamic"
-       :class="{'accounts-inner__dynamic--margin' : margin}"
-  >
-    <h2 class="accounts-inner__dynamic-title">Диманика баланса</h2>
-    <div class="accounts-inner__dynamic-items" :style="{'--count-items':countGrid}">
-      <div class="accounts-inner__dynamic-canvas">
-        <div class="accounts-inner__dynamic-bar" v-for="item in barsArray" :style="{'height':`${item.percentValue}%`} "></div>
-      </div>
-      <div class="accounts-inner__dynamic-wrapminmax">
-        <span class="accounts-inner__dynamic-value">{{ minMax.max.toLocaleString() }} ₽</span>
-        <span class="accounts-inner__dynamic-value">{{ minMax.min.toLocaleString() }} ₽</span>
-      </div>
-      <ul class="accounts-inner__dynamic-list">
-        <li v-for="item in months">
-          {{item}}
+          {{ item }}
         </li>
       </ul>
     </div>
@@ -105,8 +85,26 @@ const props = defineProps<{
 }
 .accounts-inner__dynamic-bar{
   width: 100%;
-  background: #116ACC;
+  height: var(--percent-main);
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
 }
+.accounts-inner__dynamic-bar::before,
+.accounts-inner__dynamic-bar::after{
+  content: "";
+  display: block;
+  width: 100%;
+}
+.accounts-inner__dynamic-bar::before {
+  height: var(--percent-gross);
+  background-color: #76CA66;
+}
+.accounts-inner__dynamic-bar::after {
+  height: var(--percent-loss);
+  background-color: #FD4E5D;
+}
+
 .accounts-inner__dynamic--margin{
   padding: 25px 50px 40px;
   margin: 0 0 50px;

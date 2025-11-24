@@ -9,12 +9,6 @@ const routes = [
     component: LogInView,
   },
   {
-    path: '/atms',
-    name: 'atms',
-    component: () => import('../views/AtmsView.vue'),
-    meta:{requiresAuth: true},
-  },
-  {
     path: '/accounts',
     name: 'accounts',
     component: () => import('../views/AccountsView.vue'),

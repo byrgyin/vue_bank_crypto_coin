@@ -16,6 +16,7 @@ export const useListAccountStore = defineStore('listAccountStore', () => {
   const listAccounts = ref<Account[]>([]);
   const sortType = ref<'account' | 'balance' | 'transactions' | ''>('');
   let maxAmount = ref<number>(0);
+  let minAmount = ref<number>(0);
 
   const sortedList = computed(() => {
     if(listAccounts.value){
@@ -37,6 +38,7 @@ export const useListAccountStore = defineStore('listAccountStore', () => {
     listAccounts,
     sortType,
     sortedList,
-    maxAmount
+    maxAmount,
+    minAmount
   }
 });

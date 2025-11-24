@@ -45,14 +45,16 @@ const firstAvailableAccount = computed(() => {
 
 const loadPage = async () => {
   dataPage.value = await (await loadAccount(token, account)).payload;
-  accountTo.value = firstAvailableAccount.value;
+
   const monthly = accumulateMonth(dataPage.value);
-  minMax.value = createMinMax(monthly);
-  const {count,resultArray,montShortName} = getMonths(monthly);
-  barsArray.value = resultArray.value;
+  minMax.value = createMinMax(monthly); // заполняет store.maxAmount
+
+  const { count, resultArray, montShortName } = getMonths(monthly, dataPage.value.account);
+
   countGrid.value = count;
+  barsArray.value = resultArray;
   months.value = montShortName;
-}
+};
 
 const submitTransfer = async ()=> {
  const obj = {
@@ -96,6 +98,7 @@ loadPage();
         </div>
         <BarCharts
           :route="true"
+          :margin="false"
           :account="account"
           :countGrid="countGrid"
           :minMax="minMax"
@@ -114,7 +117,7 @@ loadPage();
 
 <style scoped>
 .accounts-inner {
-  padding: 209px 0;
+  padding: 209px 0 100px;
 }
 
 .accounts-inner__middle {

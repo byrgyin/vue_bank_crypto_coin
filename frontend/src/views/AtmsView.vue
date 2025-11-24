@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { GoogleMap } from 'vue3-google-map'
 import type {LocationPoint} from "@/types/types.ts";
-import { getLocalStorageToken } from "@/composables/getLocalStorageToken";
 import {loadLocations} from "@/api/apiFetch.ts";
 
-// const locations: LocationPoint[] = await (await loadLocations(getLocalStorageToken())).payload;
+const locations: LocationPoint[] = await (await loadLocations(getLocalStorageToken())).payload;
+console.log(locations);
 </script>
 
 <template>

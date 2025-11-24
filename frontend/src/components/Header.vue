@@ -2,10 +2,6 @@
 import {useAuthoriseStore} from "@/stores/store.ts";
 const headerMenu = [
   {
-    nameView:'atms',
-    nameText: 'ATMS'
-  },
-  {
     nameView:'accounts',
     nameText: 'Accounts'
   },

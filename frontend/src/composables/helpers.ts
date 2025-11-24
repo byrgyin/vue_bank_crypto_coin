@@ -64,6 +64,8 @@ export const createMinMax = (data: Record<string, any[]>): {
 
   let min = +Infinity;
   useListAccountStore().maxAmount = -Infinity;
+  useListAccountStore().minAmount = +Infinity;
+
 
   // 3. один проход по всем транзакциям нужных месяцев
   for (const month of recent) {
@@ -75,6 +77,7 @@ export const createMinMax = (data: Record<string, any[]>): {
   }
 
   return {
+    recent: [],
     min: min === +Infinity ? 0 : min,
     max: useListAccountStore().maxAmount === -Infinity ? 0 : useListAccountStore().maxAmount
   };
@@ -110,50 +113,67 @@ export const accumulateMonth = (data: any, limit: number = 6) => {
   return limitedMonthlyData;
 };
 
-export const getMonths = (monthly:any):{ count: number,resultArray:ResultItem[],montShortName:[string] }=>{
-  const monthNames:[string] = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-  const monthNum = []
-  let montShortName:[string] = [];
-  let count:number = 0;
-  const resultArray = ref<ResultItem[]>([]);
+export const getMonths = (
+  monthly: Record<string, any[]>,
+  currentAccount: string
+): { count: number; resultArray: ResultItem[]; montShortName: string[] } => {
+  const monthNames = [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ];
 
-  for (const mont in monthly) {
-    const currMonth = Number(mont.slice(-2));
-    monthNum.push(currMonth)
-  }
-  const sortedMonths = monthNum.map(index => monthNames[index - 1]);
+  const montShortName: string[] = [];
+  const resultArray: ResultItem[] = [];
 
-  if(sortedMonths.length > 0){
-    sortedMonths.forEach(item => {
-      if (item !== undefined) {
-        montShortName.push(item.slice(0, 3));
-        count++
+  // Глобальные min/max (уже посчитаны в createMinMax)
+  const store = useListAccountStore();
+  const globalMax = store.maxAmount || 1; // защита от деления на 0
+
+  // Проходим по месяцам в правильном порядке (от старого к новому)
+  const sortedKeys = Object.keys(monthly).sort();
+
+  for (const monthKey of sortedKeys) {
+    const transactions = monthly[monthKey];
+    if (!transactions.length) continue;
+
+    // Находим входящие и исходящие суммы
+    let incoming = 0;  // когда деньги пришли НА этот счёт
+    let outgoing = 0;  // когда деньги ушли С этого счёта
+
+    transactions.forEach(tr => {
+      if (tr.to === currentAccount) {
+        incoming += tr.amount;
+      } else if (tr.from === currentAccount) {
+        outgoing += tr.amount;
       }
     });
 
-    /*--*/
-    let curentNum = 0;
-    for (const mont in monthly) {
-      if (monthly[mont]) {
-        const obj = ref<ResultItem>(
-          {curentNum:0,percentValue:0}
-        );
-        curentNum = Math.max(...monthly[mont].map(item => item.amount));
-        const percentValue = ((curentNum / useListAccountStore().maxAmount) * 100).toFixed(1);
-        obj.value.curentNum = curentNum;
-        obj.value.percentValue = percentValue;
-        resultArray.value.push(obj.value);
-      }
-    }
+    // Максимальная транзакция за месяц (для общей высоты)
+    const maxInMonth = Math.max(incoming, outgoing, 1);
+
+    // Проценты от глобального максимума
+    const percentValue = Number(((maxInMonth / globalMax) * 100).toFixed(1));
+    const percentGross = Number(((incoming / globalMax) * 100).toFixed(1));
+    const percentLoss = Number(((outgoing / globalMax) * 100).toFixed(1));
+
+    // Короткое имя месяца
+    const monthIndex = Number(monthKey.slice(-2)) - 1;
+    montShortName.push(monthNames[monthIndex].slice(0, 3));
+
+    resultArray.push({
+      curentNum: maxInMonth,
+      percentValue,
+      percentGross,
+      percentLoss
+    });
   }
-  resultArray.value = resultArray.value.reverse()
-  montShortName = montShortName.reverse()
-  return{
-    count,
+
+  return {
+    count: resultArray.length,
     resultArray,
     montShortName
-  }
-}
+  };
+};
 
 /* end create bars*/
 export const getLocalStorageToken = (): string => {return <string>localStorage.getItem('token');};
